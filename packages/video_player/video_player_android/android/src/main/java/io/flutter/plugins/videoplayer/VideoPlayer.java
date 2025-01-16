@@ -39,6 +39,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 final class VideoPlayer {
   private static final String FORMAT_SS = "ss";
@@ -288,7 +291,6 @@ final class VideoPlayer {
     if (isInitialized) {
       Map<String, Object> event = new HashMap<>();
       event.put("event", "initialized");
-      event.put("duration", exoPlayer.getDuration());
 
       if (exoPlayer.getVideoFormat() != null) {
         Format videoFormat = exoPlayer.getVideoFormat();
@@ -311,8 +313,21 @@ final class VideoPlayer {
           event.put("rotationCorrection", rotationDegrees);
         }
       }
-
-      eventSink.success(event);
+      long duration = exoPlayer.getDuration();
+      if(duration == C.TIME_UNSET) {
+        Log.d("[VideoPlayer]", "Duration is not set yet, sending event after 1 second delay");
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            event.put("duration", exoPlayer.getDuration());
+            eventSink.success(event);
+          }
+        }, 1000);
+      } else {
+        event.put("duration", exoPlayer.getDuration());
+        eventSink.success(event);
+      }
     }
   }
 
