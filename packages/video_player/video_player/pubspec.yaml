@@ -26,13 +26,29 @@ dependencies:
     sdk: flutter
   html: ^0.15.0
   video_player_android:
-    path: ../video_player_android
+#    path: ../video_player_android # for local development
+    git:
+      url: https://github.com/invideoio/flutter-packages.git
+      ref: feat/downgrade
+      path: packages/video_player/video_player_android
   video_player_avfoundation:
-    path: ../video_player_avfoundation
+#    path: ../video_player_avfoundation # for local development
+    git:
+      url: https://github.com/invideoio/flutter-packages.git
+      ref: feat/downgrade
+      path: packages/video_player/video_player_avfoundation
   video_player_platform_interface:
-    path: ../video_player_platform_interface
+#    path: ../video_player_platform_interface # for local development
+    git:
+      url: https://github.com/invideoio/flutter-packages.git
+      ref: feat/downgrade
+      path: packages/video_player/video_player_platform_interface
   video_player_web:
-    path: ../video_player_web
+#    path: ../video_player_web # for local development
+    git:
+      url: https://github.com/invideoio/flutter-packages.git
+      ref: feat/downgrade
+      path: packages/video_player/video_player_web
 
 dev_dependencies:
   flutter_test:
