@@ -5,8 +5,13 @@
 package io.flutter.plugins.videoplayer;
 
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
+import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
@@ -119,16 +124,33 @@ final class ExoPlayerEventListener implements Player.Listener {
         }
       }
 
-      // Switch the width/height if video was taken in portrait mode and a rotation
-      // correction was detected.
-      if (reportedRotationCorrection == RotationDegrees.ROTATE_90
-          || reportedRotationCorrection == RotationDegrees.ROTATE_270) {
-        width = videoSize.height;
-        height = videoSize.width;
-      }
+            // Switch the width/height if video was taken in portrait mode and a rotation
+            // correction was detected.
+            if (reportedRotationCorrection == RotationDegrees.ROTATE_90
+                    || reportedRotationCorrection == RotationDegrees.ROTATE_270) {
+                width = videoSize.height;
+                height = videoSize.width;
+            }
+        }
+
+        long duration = exoPlayer.getDuration();
+
+        if (duration == C.TIME_UNSET) {
+            Log.d("[VideoPlayer]", "Duration is not set yet, sending event after 1 second delay");
+            Handler handler = new Handler(Looper.getMainLooper());
+            int tempRotationCorrection = rotationCorrection;
+            int tempHeight = height;
+            int tempWidth = width;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    events.onInitialized(tempWidth, tempHeight, exoPlayer.getDuration(), tempRotationCorrection);
+                }
+            }, 1000);
+        } else {
+            events.onInitialized(width, height, duration, rotationCorrection);
+        }
     }
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
-  }
 
   private int getRotationCorrectionFromUnappliedRotation(RotationDegrees unappliedRotationDegrees) {
     int rotationCorrection = 0;
