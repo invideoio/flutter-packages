@@ -75,6 +75,8 @@ final class ExoPlayerEventListener implements Player.Listener {
 
   @SuppressWarnings("SuspiciousNameCombination")
   private void sendInitialized() {
+    Log.d("[VideoPlayer]", "call sendInitialized");
+    System.out.println("[VideoPlayer] ::: call sendInitialized");
     if (isInitialized) {
       return;
     }
@@ -134,9 +136,11 @@ final class ExoPlayerEventListener implements Player.Listener {
         }
 
         long duration = exoPlayer.getDuration();
-
+    Log.d("[VideoPlayer]", "start duration check");
+    System.out.println("[VideoPlayer] ::: start duration check");
         if (duration == C.TIME_UNSET) {
             Log.d("[VideoPlayer]", "Duration is not set yet, sending event after 1 second delay");
+            System.out.println("[VideoPlayer] ::: Duration is not set yet, sending event after 1 second delay");
             Handler handler = new Handler(Looper.getMainLooper());
             int tempRotationCorrection = rotationCorrection;
             int tempHeight = height;
@@ -148,6 +152,9 @@ final class ExoPlayerEventListener implements Player.Listener {
                 }
             }, 1000);
         } else {
+          Log.d("[VideoPlayer]", "---else condition----");
+          System.out.println("[VideoPlayer] ::: else condition");
+
             events.onInitialized(width, height, duration, rotationCorrection);
         }
     }
@@ -177,6 +184,7 @@ final class ExoPlayerEventListener implements Player.Listener {
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
+    System.out.println("[VideoPlayer] ::: onPlaybackStateChanged");
     switch (playbackState) {
       case Player.STATE_BUFFERING:
         setBuffering(true);
